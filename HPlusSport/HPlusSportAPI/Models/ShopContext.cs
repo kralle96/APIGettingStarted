@@ -9,6 +9,11 @@ namespace HPlusSportAPI.Models
 {
     public class ShopContext : DbContext
     {
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Catergorys { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<User> Users { get; set; }
+
         public ShopContext(DbContextOptions<ShopContext>options) : base(options)
         {
 
@@ -16,15 +21,12 @@ namespace HPlusSportAPI.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Category>().HasMany(c => c.Products);
+            modelBuilder.Entity<Category>().HasMany(c => c.Products).WithOne(a => a.Catergory).HasForeignKey(a => a.CategoryId);
             modelBuilder.Entity<Order>().HasMany(o => o.Products);
             modelBuilder.Entity<Order>().HasOne(o => o.User);
-            modelBuilder.Entity<User>().HasMany(u => u.Orders).WithOne(o => o.User);
-        }
+            modelBuilder.Entity<User>().HasMany(u => u.Orders).WithOne(o => o.User).HasForeignKey(o => o.UserId);
 
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Catergorys { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<User> Users { get; set; }
+            modelBuilder.Seed();
+        }
     }
 }
